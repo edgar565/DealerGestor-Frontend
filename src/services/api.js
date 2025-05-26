@@ -1,14 +1,3 @@
-const API_URL = 'https://api.ejemplo.com';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://34.200.147.24:8080';
 
-export const getData = async () => {
-    try {
-        const response = await fetch(`${API_URL}/datos`);
-        if (!response.ok) {
-            throw new Error('Error al obtener los datos');
-        }
-        return await response.json();
-    } catch (error) {
-        console.error(error);
-        return null;
-    }
-};
+export const getApiUrl = (endpoint) => `${API_BASE_URL}${endpoint}`;

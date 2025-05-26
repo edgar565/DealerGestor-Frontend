@@ -1,32 +1,117 @@
-// src/App.jsx
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// src/App.tsx
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { PrivateRoute } from "./components/PrivateRoute";
+import { PublicRoute } from "./components/PublicRoute";
 
-import Dashboard from './pages/Dashboard.jsx';
-import AppointmentManagement from './pages/AppointmentManagement.jsx';
-import AccidentManagement from './pages/AccidentManagement.jsx';
-import RepairManagement from './pages/RepairManagement.jsx';
-import TaskManagement from './pages/TaskManagement.jsx';
-import ClientManagement from './pages/ClientManagement.jsx';
-import CreateClient from './pages/CreateClient.jsx';
-import MotorcycleManagement from './pages/MotorcycleManagement.jsx';
-import MotorcyclesInRepair from './pages/MotorcyclesInRepair.jsx';
-import DailyAppointments from './pages/DailyAppointments.jsx';
+import Login from "./components/Login";
+import Dashboard from "./components/Dashboard";
+import ClientManagement from "./components/ClientManagement.jsx";
+import VehicleManagement from "./components/VehicleManagement.jsx";
+import AppointmentManagement from "./components/AppointmentManagement.jsx";
+import AccidentManagement from "./components/AccidentManagement.jsx";
+import RepairManagement from "./components/RepairManagement.jsx";
+import TaskManagement from "./components/TaskManagement.jsx";
+import Note from "./components/Note.jsx";
+import CompanyUserManagement from "./components/CompanyUserManagement.jsx";
+import CompanyConfiguration from "./components/CompanyConfiguration.jsx";
 
 function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/appointments" element={<AppointmentManagement />} />
-                <Route path="/accidents" element={<AccidentManagement />} />
-                <Route path="/repairs" element={<RepairManagement />} />
-                <Route path="/tasks" element={<TaskManagement />} />
-                <Route path="/clients" element={<ClientManagement />} />
-                <Route path="/clients/new" element={<CreateClient />} />
-                <Route path="/motorcycles" element={<MotorcycleManagement />} />
-                <Route path="/in-repair" element={<MotorcyclesInRepair />} />
-                <Route path="/today" element={<DailyAppointments />} />
-                {/* Add more routes here as you build new pages */}
+                {/* Login pública */}
+                <Route
+                    path="/login"
+                    element={
+                        <PublicRoute>
+                            <Login />
+                        </PublicRoute>
+                    }
+                />
+
+                {/* Rutas privadas */}
+                <Route
+                    path="/dashboard"
+                    element={
+                        <PrivateRoute>
+                            <Dashboard />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/clientmanagement"
+                    element={
+                        <PrivateRoute>
+                            <ClientManagement />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/vehiclemanagement"
+                    element={
+                        <PrivateRoute>
+                            <VehicleManagement />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/appointmentmanagement"
+                    element={
+                        <PrivateRoute>
+                            <AppointmentManagement />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/accidentmanagement"
+                    element={
+                        <PrivateRoute>
+                            <AccidentManagement />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/repairmanagement"
+                    element={
+                        <PrivateRoute>
+                            <RepairManagement />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/taskmanagement"
+                    element={
+                        <PrivateRoute>
+                            <TaskManagement />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/notes"
+                    element={
+                        <PrivateRoute>
+                            <Note />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/configurationcompany"
+                    element={
+                        <PrivateRoute>
+                            <CompanyConfiguration />
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/usersmanagement"
+                    element={
+                        <PrivateRoute>
+                            <CompanyUserManagement />
+                        </PrivateRoute>
+                    }
+                />
+                {/* Redirección de cualquier otra ruta a login */}
+                <Route path="*" element={<Navigate to="/login" replace />} />
             </Routes>
         </Router>
     );
