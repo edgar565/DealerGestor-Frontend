@@ -12,13 +12,19 @@ const CompanyUserManagement = () => {
     const [searchName, setSearchName] = useState('');
     const [searchEmail, setSearchEmail] = useState('');
 
+
     useEffect(() => {
         fetchUsers();
     }, []);
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get(getApiUrl('/company-users'));
+            const token = localStorage.getItem('token');
+            const response = await axios.get(getApiUrl('/company-users'), {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             setUsers(response.data);
         } catch (error) {
             console.error('Error fetching users:', error);
@@ -36,10 +42,14 @@ const CompanyUserManagement = () => {
         };
 
         try {
-            await axios.post(getApiUrl('/company-users/register'), newUser);
+            const token = localStorage.getItem('token');
+            await axios.post(getApiUrl('/company-users/register'), newUser, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             form.reset();
             fetchUsers();
-            // Close modal manually, depends on your modal impl
             window.bootstrap.Modal.getInstance(document.getElementById('userFormModal')).hide();
         } catch (error) {
             console.error('Error saving user:', error);
@@ -48,7 +58,6 @@ const CompanyUserManagement = () => {
 
     const handleSearch = async (e) => {
         e.preventDefault();
-        // Implement your search logic here (filter or backend search)
         if (searchName || searchEmail) {
             const filtered = users.filter(user =>
                 user.name.toLowerCase().includes(searchName.toLowerCase()) &&
@@ -59,6 +68,7 @@ const CompanyUserManagement = () => {
             fetchUsers();
         }
     };
+
 
     const headers = ["NOMBRE", "EMAIL", "ROL", "ACCIONES"];
     const rows = users.map(user => [

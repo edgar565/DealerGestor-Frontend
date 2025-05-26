@@ -4,6 +4,9 @@ import Header from '../components/ui/Header';
 import Modal from '../components/ui/Modal';
 import Table from '../components/ui/Table';
 import { Button } from './ui/Button';
+import '../styles/management.css';
+import axios from 'axios';
+import { getApiUrl } from '../services/api';
 
 const ClientManagement = () => {
     const [clients, setClients] = useState([]);
@@ -15,45 +18,78 @@ const ClientManagement = () => {
 
     const headers = ['NOMBRE', 'TELÉFONO', 'VEHÍCULOS', 'ACCIONES'];
 
-    // Simulated data fetching
     useEffect(() => {
-        const initialClients = [
-            { id: 1, nombre: 'Juan Pérez', telefono: '123456789', vehiculos: 2 },
-            { id: 2, nombre: 'María Gómez', telefono: '987654321', vehiculos: 1 }
-        ];
-        setClients(initialClients);
+        fetchClients();
     }, []);
+
+    const fetchClients = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(getApiUrl('/clients'), {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setClients(response.data);
+        } catch (error) {
+            console.error('Error fetching clients:', error);
+        }
+    };
 
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         setFormData((prev) => ({ ...prev, [id]: value }));
     };
 
-    const handleSearchSubmit = (e) => {
+    const handleSearchSubmit = async (e) => {
         e.preventDefault();
-        // You can call your backend here instead
-        const filtered = clients.filter((c) => c.nombre.toLowerCase().includes(searchTerm.toLowerCase()));
-        setClients(filtered);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(getApiUrl(`/clients/search/${searchTerm}`), {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setClients(response.data);
+        } catch (error) {
+            console.error('Error searching clients:', error);
+        }
     };
 
-    const handleSaveClient = (e) => {
+    const handleSaveClient = async (e) => {
         e.preventDefault();
-        const updatedClients = formData.id
-            ? clients.map((client) => (client.id === Number(formData.id) ? { ...formData, id: Number(formData.id) } : client))
-            : [...clients, { ...formData, id: Date.now(), vehiculos: 0 }];
-        setClients(updatedClients);
-        setFormData({ id: '', nombre: '', telefono: '' });
-        document.getElementById('clientFormModal-close')?.click();
+        try {
+            const token = localStorage.getItem('token');
+            const client = { nombre: formData.nombre, telefono: formData.telefono };
+            if (formData.id) {
+                await axios.put(getApiUrl(`/clients/${formData.id}`), client, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            } else {
+                await axios.post(getApiUrl('/clients'), client, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            }
+            setFormData({ id: '', nombre: '', telefono: '' });
+            fetchClients();
+            document.getElementById('clientFormModal-close')?.click();
+        } catch (error) {
+            console.error('Error saving client:', error);
+        }
     };
 
     const handleEdit = (client) => {
         setFormData(client);
     };
 
-    const handleConfirmDelete = () => {
+    const handleConfirmDelete = async () => {
         if (clientToDelete) {
-            setClients((prev) => prev.filter((c) => c.id !== clientToDelete.id));
-            setClientToDelete(null);
+            try {
+                const token = localStorage.getItem('token');
+                await axios.delete(getApiUrl(`/clients/${clientToDelete.id}`), {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setClientToDelete(null);
+                fetchClients();
+            } catch (error) {
+                console.error('Error deleting client:', error);
+            }
         }
     };
 
@@ -80,13 +116,7 @@ const ClientManagement = () => {
             <Button variant="danger" size="sm" className="ms-2" data-bs-toggle="modal" data-bs-target="#confirmModal" onClick={() => setClientToDelete(client)}>
                 <i className="fa-solid fa-trash"></i>
             </Button>
-            {/* Botón para ver vehículos */}
-            <Button
-                variant="info"
-                size="sm"
-                className="ms-2"
-                onClick={() => navigate(`/vehicles/${client.id}`)}
-            >
+            <Button variant="info" size="sm" className="ms-2" onClick={() => navigate(`/vehicles/${client.id}`)}>
                 <i className="fa-solid fa-car me-1"></i>VER VEHÍCULOS
             </Button>
         </>

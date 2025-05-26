@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import {Button} from "./ui/Button.jsx";
-import {Input} from "./ui/Input.jsx";
+import { Button } from "./ui/Button.jsx";
+import { Input } from "./ui/Input.jsx";
 import '../styles/styles.css';
 import { useNavigate } from 'react-router-dom';
+import { setThemeConfig } from '../utils/themeConfig';
+
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -24,9 +26,33 @@ const Login = () => {
             if (!response.ok) throw new Error('Invalid credentials');
 
             const data = await response.json();
-            console.log(data); // Aquí podrías guardar el token en localStorage si quieres
+            localStorage.setItem('token', data.token);
 
-            navigate('/dashboard'); // Redirige al dashboard
+            try {
+                const configResponse = await fetch('http://34.200.147.24:8080/company/1', {
+                    headers: {
+                        'Authorization': `Bearer ${data.token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (configResponse.ok) {
+                    const configData = await configResponse.json();
+                    // Guarda en configuración global para usar en cualquier parte
+                    setThemeConfig({
+                        primaryColor: configData.primaryColor,
+                        secondaryColor: configData.secondaryColor,
+                        logo: configData.logoUrl
+                    });
+                } else {
+                    console.warn('No se pudo cargar la configuración del tema');
+                }
+
+            } catch (e) {
+                console.error('Error cargando configuración', e);
+            }
+
+            navigate('/dashboard');
         } catch (err) {
             console.error(err);
         }
@@ -40,7 +66,7 @@ const Login = () => {
                     <div className="d-flex align-items-center justify-content-center">
                         <img
                             className="mb-4"
-                            src="src/utils/DealerGestor-logo_edited.jpg"
+                            src="/DealerGestor-logo_edited.jpg"
                             alt="Logo DealerGestor"
                             width="114"
                             height="95"
@@ -79,7 +105,8 @@ const Login = () => {
                     </Button>
                 </form>
             </div>
-        </main>);
+        </main>
+    );
 };
 
 export default Login;

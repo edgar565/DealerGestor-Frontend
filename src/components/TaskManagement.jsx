@@ -8,6 +8,7 @@ import '../styles/management.css';
 const TaskManagement = () => {
     const buttons = [];
 
+
     const headersJose = ["MATRÍCULA", "MARCA", "MODELO", "ACCIONES"];
     const headersSaid = ["MATRÍCULA", "MARCA", "MODELO", "ACCIONES"];
 

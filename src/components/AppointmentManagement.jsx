@@ -15,13 +15,21 @@ const AppointmentManagement = () => {
     const [vehicleSearch, setVehicleSearch] = useState('');
     const [selectedVehicleId, setSelectedVehicleId] = useState('');
 
+
     useEffect(() => {
         fetchAppointments();
     }, []);
 
     const fetchAppointments = async () => {
-        const response = await axios.get(getApiUrl('/appointments'));
-        setAppointments(response.data);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(getApiUrl('/appointments'), {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setAppointments(response.data);
+        } catch (error) {
+            console.error('Error fetching appointments:', error);
+        }
     };
 
     const handleSaveAppointment = async (e) => {
@@ -32,21 +40,39 @@ const AppointmentManagement = () => {
             task: form.tarea.value,
             vehicleId: selectedVehicleId
         };
-        await axios.post(getApiUrl('/appointments/save'), appointment);
-        form.reset();
-        fetchAppointments();
+
+        try {
+            const token = localStorage.getItem('token');
+            await axios.post(getApiUrl('/appointments/save'), appointment, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            form.reset();
+            fetchAppointments();
+        } catch (error) {
+            console.error('Error saving appointment:', error);
+        }
     };
 
     const handleSearch = async (e) => {
         e.preventDefault();
-        if (searchMatricula) {
-            const response = await axios.get(getApiUrl(`/appointments/vehicle/${searchMatricula}`));
+        const token = localStorage.getItem('token');
+        try {
+            let response;
+            if (searchMatricula) {
+                response = await axios.get(getApiUrl(`/appointments/vehicle/${searchMatricula}`), {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            } else if (searchClient) {
+                response = await axios.get(getApiUrl(`/appointments/client/${searchClient}`), {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+            } else {
+                fetchAppointments();
+                return;
+            }
             setAppointments(response.data);
-        } else if (searchClient) {
-            const response = await axios.get(getApiUrl(`/appointments/client/${searchClient}`));
-            setAppointments(response.data);
-        } else {
-            fetchAppointments();
+        } catch (error) {
+            console.error('Error searching appointments:', error);
         }
     };
 
@@ -54,8 +80,15 @@ const AppointmentManagement = () => {
         const value = e.target.value;
         setVehicleSearch(value);
         if (value.length >= 2) {
-            const response = await axios.get(getApiUrl(`/vehicles/search/${value}`));
-            setVehicles(response.data);
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get(getApiUrl(`/vehicles/search/${value}`), {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setVehicles(response.data);
+            } catch (error) {
+                console.error('Error searching vehicles:', error);
+            }
         }
     };
 

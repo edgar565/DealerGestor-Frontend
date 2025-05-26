@@ -1,5 +1,6 @@
 :root{
-    --btn-color: #BD1522;
+    --color-primary: #BD1522;
+    --color-secondary: #1f1f1f;
     --bg-color: #6f6f6f;
 }
 
@@ -13,7 +14,7 @@ body{
 }
 
 .bg-primary{
-    background-color: var(--btn-color) !important;
+    background-color: var(--color-primary) !important;
 }
 
 .bg-secondary{
@@ -26,6 +27,6 @@ body{
 
 select:focus,
 input:focus{
-    border-color: var(--btn-color) !important;
+    border-color: var(--color-primary) !important;
     box-shadow: 0 0 0 0.2rem rgba(189, 21, 34, 0.25) !important;
 }

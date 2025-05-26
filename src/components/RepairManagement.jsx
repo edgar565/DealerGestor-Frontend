@@ -11,6 +11,8 @@ const RepairManagement = () => {
     const [vehicles, setVehicles] = useState([]);
     const [selectedRepair, setSelectedRepair] = useState(null);
 
+
+
     const leftButton = [
         <Button data-bs-toggle="modal" data-bs-target="#repairFormModal" onClick={() => setSelectedRepair(null)}>
             <i className="fa-solid fa-plus me-2"></i>AÑADIR REPARACIÓN
@@ -30,7 +32,11 @@ const RepairManagement = () => {
 
     const fetchRepairs = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}/api/repairs`);
+            const response = await fetch(`${getApiUrl()}/api/repairs`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
             const data = await response.json();
             setRepairs(data);
         } catch (error) {
@@ -40,7 +46,11 @@ const RepairManagement = () => {
 
     const fetchVehicles = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}/api/vehicles`);
+            const response = await fetch(`${getApiUrl()}/api/vehicles`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
             const data = await response.json();
             setVehicles(data);
         } catch (error) {
@@ -61,7 +71,10 @@ const RepairManagement = () => {
         try {
             const response = await fetch(`${getApiUrl()}/api/repairs/${id ? `update/${id}` : 'save'}`, {
                 method: id ? 'PUT' : 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
                 body: JSON.stringify(repair)
             });
 
@@ -83,7 +96,11 @@ const RepairManagement = () => {
 
         try {
             const endpoint = plate ? `vehicle/${plate}` : `keychain/${keychain}`;
-            const response = await fetch(`${getApiUrl()}/api/repairs/${endpoint}`);
+            const response = await fetch(`${getApiUrl()}/api/repairs/${endpoint}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
             const data = await response.json();
             setRepairs(data);
         } catch (error) {
@@ -96,7 +113,10 @@ const RepairManagement = () => {
 
         try {
             const response = await fetch(`${getApiUrl()}/api/repairs/delete/${selectedRepair.id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
             });
             if (!response.ok) throw new Error('Error al eliminar la reparación');
             await fetchRepairs();

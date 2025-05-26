@@ -5,12 +5,17 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import Modal from './Modal';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { getThemeConfig } from '../../utils/themeConfig';
+
+
 
 const Calendar = () => {
+    const { primaryColor } = getThemeConfig();
     const calendarRef = useRef(null);
     const [calendarHeight, setCalendarHeight] = useState('auto');
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [events, setEvents] = useState([]);
+    const token = localStorage.getItem('token');
 
     useEffect(() => {
         const adjustHeight = () => {
@@ -29,7 +34,12 @@ const Calendar = () => {
     useEffect(() => {
         const fetchAppointments = async () => {
             try {
-                const response = await fetch('http://34.200.147.24:8080/appointments');
+                const response = await fetch('http://34.200.147.24:8080/appointments', {
+                   headers: {
+                       'Authorization': `Bearer ${token}`,
+                       'Content-Type': 'application/json',
+                   }
+                });
                 const data = await response.json();
                 const formattedEvents = data.map((appointment) => ({
                     title: `${appointment.licensePlate} ${appointment.nameClient}`,
@@ -80,7 +90,7 @@ const Calendar = () => {
                 height={calendarHeight}
                 dayMaxEventRows={2}
                 aspectRatio={2.5}
-                eventColor="#BD1522"
+                eventColor={primaryColor}
             />
             <Modal id="eventModal" title={selectedEvent?.title || ''}>
                 {selectedEvent?.description?.split('\n').map((line, index) => (

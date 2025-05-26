@@ -21,7 +21,10 @@ const VehicleManagement = () => {
 
     const fetchVehicles = async () => {
         try {
-            const response = await axios.get(getApiUrl('/vehicles'));
+            const token = localStorage.getItem('token');
+            const response = await axios.get(getApiUrl('/vehicles'), {
+                headers: { Authorization: `Bearer ${token}` },
+            });
             setVehicles(response.data);
         } catch (error) {
             console.error('Error fetching vehicles:', error);
@@ -30,7 +33,10 @@ const VehicleManagement = () => {
 
     const fetchClients = async (query) => {
         try {
-            const response = await axios.get(getApiUrl(`/clients/search/${query}`));
+            const token = localStorage.getItem('token');
+            const response = await axios.get(getApiUrl(`/clients/search/${query}`), {
+                headers: { Authorization: `Bearer ${token}` },
+            });
             setClients(response.data);
         } catch (error) {
             console.error('Error fetching clients:', error);
@@ -44,11 +50,14 @@ const VehicleManagement = () => {
             licensePlate: form.licensePlate.value,
             brand: form.brand.value,
             model: form.model.value,
-            clientId: selectedClientId
+            clientId: selectedClientId,
         };
 
         try {
-            await axios.post(getApiUrl('/vehicles/save'), vehicle);
+            const token = localStorage.getItem('token');
+            await axios.post(getApiUrl('/vehicles/save'), vehicle, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
             form.reset();
             setSelectedClientId('');
             fetchVehicles();
@@ -60,11 +69,16 @@ const VehicleManagement = () => {
     const handleSearch = async (e) => {
         e.preventDefault();
         try {
+            const token = localStorage.getItem('token');
             if (searchLicensePlate) {
-                const response = await axios.get(getApiUrl(`/vehicles/licensePlate/${searchLicensePlate}`));
+                const response = await axios.get(getApiUrl(`/vehicles/licensePlate/${searchLicensePlate}`), {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
                 setVehicles(response.data);
             } else if (searchClientName) {
-                const response = await axios.get(getApiUrl(`/vehicles/client/${searchClientName}`));
+                const response = await axios.get(getApiUrl(`/vehicles/client/${searchClientName}`), {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
                 setVehicles(response.data);
             } else {
                 fetchVehicles();
@@ -88,12 +102,16 @@ const VehicleManagement = () => {
         if (!window.confirm('¿Seguro que quieres eliminar este vehículo?')) return;
 
         try {
-            await axios.delete(getApiUrl(`/vehicles/delete/${vehicleId}`));
+            const token = localStorage.getItem('token');
+            await axios.delete(getApiUrl(`/vehicles/delete/${vehicleId}`), {
+                headers: { Authorization: `Bearer ${token}` },
+            });
             fetchVehicles();
         } catch (error) {
             console.error('Error deleting vehicle:', error);
         }
     };
+
 
     const headers = ["MATRÍCULA", "MARCA", "MODELO", "CLIENTE", "ACCIONES"];
     const rows = vehicles.map(vehicle => [

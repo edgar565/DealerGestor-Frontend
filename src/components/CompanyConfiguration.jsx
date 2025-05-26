@@ -14,14 +14,21 @@ const CompanyConfiguration = () => {
     });
     const [logoFile, setLogoFile] = useState(null);
 
+
     useEffect(() => {
         fetchConfiguration();
     }, []);
 
     const fetchConfiguration = async () => {
         try {
-            const companyId = localStorage.getItem('companyId'); // o donde lo guardes
-            const response = await axios.get(getApiUrl(`/company/${companyId}`));
+            const companyId = 1; // o donde lo guardes
+            const token = localStorage.getItem('token');
+
+            const response = await axios.get(getApiUrl(`/company/${companyId}`), {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
             setFormData(response.data);
         } catch (error) {
             console.error('Error loading configuration:', error);
@@ -40,6 +47,8 @@ const CompanyConfiguration = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            const token = localStorage.getItem('token');
+
             const form = new FormData();
             form.append('data', new Blob([JSON.stringify({
                 id: formData.id,
@@ -52,7 +61,10 @@ const CompanyConfiguration = () => {
             }
 
             const response = await axios.put(getApiUrl('/company/update'), form, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`,
+                },
             });
 
             setFormData(response.data);

@@ -10,10 +10,17 @@ import VehicleManagement from "./components/VehicleManagement.jsx";
 import AppointmentManagement from "./components/AppointmentManagement.jsx";
 import AccidentManagement from "./components/AccidentManagement.jsx";
 import RepairManagement from "./components/RepairManagement.jsx";
-import TaskManagement from "./components/TaskManagement.jsx";
 import Note from "./components/Note.jsx";
 import CompanyUserManagement from "./components/CompanyUserManagement.jsx";
 import CompanyConfiguration from "./components/CompanyConfiguration.jsx";
+import { setThemeConfig } from './utils/themeConfig.js';
+
+// Aplica configuración inicial o dinámica al cargar la app
+setThemeConfig({
+    primaryColor: '#0055FF',
+    secondaryColor: '#222222',
+    bgColor: '#F0F0F0'
+});
 
 function App() {
     return (
@@ -75,14 +82,6 @@ function App() {
                     element={
                         <PrivateRoute>
                             <RepairManagement />
-                        </PrivateRoute>
-                    }
-                />
-                <Route
-                    path="/taskmanagement"
-                    element={
-                        <PrivateRoute>
-                            <TaskManagement />
                         </PrivateRoute>
                     }
                 />

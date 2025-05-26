@@ -17,7 +17,6 @@ const Dashboard = () => {
                 <Button onClick={() => navigate("/repairmanagement")}>GESTIÓN DE REPARACIONES</Button>
                 <Button onClick={() => navigate("/accidentmanagement")}>GESTIÓN DE SINIESTROS</Button>
                 <Button onClick={() => navigate("/clientmanagement")}>GESTIÓN DE CLIENTES</Button>
-                <Button onClick={() => navigate("/taskmanagement")}>GESTIÓN DE TAREAS</Button>
                 <Button onClick={() => navigate("/parts")}>GESTIÓN DE PARTES</Button>
             </div>
 

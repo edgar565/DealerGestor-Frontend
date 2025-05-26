@@ -16,8 +16,13 @@ const AccidentManagement = () => {
     }, []);
 
     const fetchAccidents = async () => {
+        const token = localStorage.getItem('token');
         try {
-            const response = await axios.get(getApiUrl('/accidents'));
+            const response = await axios.get(getApiUrl('/accidents'), {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
             setAccidents(response.data);
         } catch (error) {
             console.error('Error fetching accidents:', error);
@@ -26,11 +31,16 @@ const AccidentManagement = () => {
 
     const saveAccident = async (event) => {
         event.preventDefault();
+        const token = localStorage.getItem('token');
         const formData = new FormData(event.target);
         const data = Object.fromEntries(formData.entries());
 
         try {
-            await axios.post(getApiUrl('/accidents/save'), data);
+            await axios.post(getApiUrl('/accidents/save'), data, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
             fetchAccidents();
             document.querySelector('#accidentFormModal .btn-close').click();
         } catch (error) {
@@ -39,16 +49,20 @@ const AccidentManagement = () => {
     };
 
     const confirmDelete = async () => {
+        const token = localStorage.getItem('token');
         const id = document.getElementById('accidentId').value;
         try {
-            await axios.delete(getApiUrl(`/accidents/${id}`));
+            await axios.delete(getApiUrl(`/accidents/${id}`), {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
             fetchAccidents();
             document.querySelector('#confirmModal .btn-close').click();
         } catch (error) {
             console.error('Error deleting accident:', error);
         }
     };
-
 
     const leftButton = [
         <Button data-bs-toggle="modal" data-bs-target="#accidentFormModal">
